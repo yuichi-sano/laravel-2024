@@ -1,0 +1,62 @@
+FROM php:8.3.4-fpm-bullseye
+
+# 開発環境
+ARG ENVIRONMENT
+
+# env
+ENV ENVIRONMENT ${ENVIRONMENT}
+ENV AWS_REGION ap-northeast-1
+
+# env(setup composer)
+ENV COMPOSER_ALLOW_SUPERUSER 1
+ENV COMPOSER_HOME /composer
+ENV PATH $PATH:/composer/vendor/bin
+
+# install
+RUN apt-get update \
+    && apt-get install -y zlib1g-dev mariadb-client vim libzip-dev libpng-dev unzip supervisor procps cron \
+    && docker-php-ext-install zip pdo_mysql gd \
+    && pecl install mailparse \
+    && docker-php-ext-enable mailparse
+
+# Install XDebug
+RUN if [ "$ENVIRONMENT" = "local" ]; then pecl install xdebug && docker-php-ext-enable xdebug; fi
+
+# Install Composer
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+
+# Laravel
+ADD ./src /var/www
+ADD ./app /app
+
+# copy
+COPY ./docker/api/php.ini /usr/local/etc/php/
+COPY ./docker/api/supervisor/${ENVIRONMENT} /etc/supervisor/conf.d/
+COPY ./docker/api/awslogs/${ENVIRONMENT}/awslogs.conf ./awslogs.conf
+
+# set timezone
+RUN cp /usr/share/zoneinfo/Asia/Tokyo /etc/localtime
+
+# Install awslogs
+RUN curl https://s3.amazonaws.com/aws-cloudwatch/downloads/latest/awslogs-agent-setup.py -O
+RUN chmod +x ./awslogs-agent-setup.py
+RUN ./awslogs-agent-setup.py --non-interactive --region ${AWS_REGION} --configfile ./awslogs.conf
+
+# set cron
+COPY ./docker/api/cron/${ENVIRONMENT} /etc/cron.d/
+RUN chmod 0644 /etc/cron.d/*
+RUN crontab /etc/cron.d/laravel-scheduler
+
+# change api dir
+WORKDIR /var/www/html
+
+# Install Laravel
+RUN composer global require "laravel/installer"
+RUN if [ "$ENVIRONMENT" = "local" ] ; then composer install; else composer install --optimize-autoloader --no-dev; fi
+
+# set AWS_CONTAINER_CREDENTIALS_RELATIVE_URI
+RUN echo 'export $(strings /proc/1/environ | grep AWS_CONTAINER_CREDENTIALS_RELATIVE_URI)' >> /etc/bashrc
+
+# start server
+RUN chmod +x /app/entrypoint-worker-${ENVIRONMENT}.sh
+CMD /app/entrypoint-worker-${ENVIRONMENT}.sh && tail -f /dev/null

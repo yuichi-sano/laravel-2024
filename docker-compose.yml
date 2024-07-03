@@ -1,0 +1,110 @@
+version: "3.8"
+
+services:
+  api:
+    build:
+      context: .
+      args:
+        - ENVIRONMENT=local
+      dockerfile: ./docker/api/Dockerfile
+    container_name: sample_2024-api
+    volumes:
+      - ./sample_2024-api:/var/www/html
+      # - api_storage:/var/www/html/storage
+      # - api_modules:/var/www/html/vendor
+      # - api_cache:/var/www/html/bootstrap/cache
+      - ./docker/api/xdebug.ini:/usr/local/etc/php/conf.d/host-xdebug.ini
+      - php-fpm_socket:/var/run/php-fpm
+    ports:
+      - 3030:3000
+      - 3000:9000
+    depends_on:
+      - db
+      - redis
+      - s3
+    networks:
+      - sample2024
+  nginx:
+    build:
+      context: .
+      args:
+        - ENVIRONMENT=local
+      dockerfile: ./docker/nginx/Dockerfile
+    container_name: sample_2024-nginx
+    ports:
+      - 8000:8000
+    volumes:
+      - php-fpm_socket:/var/run/php-fpm
+    depends_on:
+      - api
+    networks:
+      - sample2024
+  db:
+    image: mysql:8.0
+    platform: linux/x86_64
+    restart: always
+    container_name: sample_2024-db
+    environment:
+      MYSQL_ROOT_PASSWORD: sample_2024
+      MYSQL_USER: sample_2024
+      MYSQL_PASSWORD: sample_2024
+      TZ: "Asia/Tokyo"
+    command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_general_ci --default_authentication_plugin=mysql_native_password
+    volumes:
+      - ./docker/db/sql:/docker-entrypoint-initdb.d
+      - ./docker/db/my.cnf:/etc/mysql/conf.d/my.cnf
+      - mysql_data:/var/lib/mysql
+    ports:
+      - 3306:3306
+    networks:
+      - sample2024
+
+  redis:
+    image: redis
+    container_name: sample_2024-redis
+    networks:
+      - sample2024
+  s3:
+    image: minio/minio
+    container_name: contents-s3
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - s3_data:/data
+    environment:
+      MINIO_ROOT_USER: minio
+      MINIO_ROOT_PASSWORD: minio123
+    command: server /data --console-address ':9001'
+    networks:
+      - sample2024
+  mail:
+    image: axllent/mailpit:v1.8
+    container_name: mailpit
+    ports:
+      - 8025:8025
+      - 1025:1025
+    networks:
+      - sample2024
+
+networks:
+  sample2024:
+    driver: bridge
+volumes:
+  mysql_data:
+    driver: "local"
+  s3_data:
+    driver: "local"
+  api_cache:
+    driver: "local"
+  api_storage:
+    driver: "local"
+  api_modules:
+    driver: "local"
+  mail_data:
+    driver: "local"
+  mail_state:
+    driver: "local"
+  mail_log:
+    driver: "local"
+  php-fpm_socket:

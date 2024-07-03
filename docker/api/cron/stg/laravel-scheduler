@@ -1,0 +1,1 @@
+* * * * * /usr/local/bin/php /var/www/html/artisan --env=stg schedule:run >> /var/www/html/storage/logs/schedule.log 2>&1

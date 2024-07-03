@@ -1,0 +1,24 @@
+version: '3'
+services:
+    schemaspy:
+        container_name: schemaspy
+        image: schemaspy/schemaspy:snapshot
+        extra_hosts:
+            - 'host.docker.internal:host-gateway'
+        volumes:
+            - ./schemaspy/schemaspy.properties:/schemaspy.properties
+            - ./schemaspy/output:/output
+        tty: true
+        environment:
+            SCHEMASPY_OUTPUT: /output
+        networks:
+            - sample_2024-doc
+networks:
+    sample_2024-doc:
+        driver: bridge
+    default:
+        external:
+            name: bridge
+volumes:
+    swagger-node-modules:
+        driver: local

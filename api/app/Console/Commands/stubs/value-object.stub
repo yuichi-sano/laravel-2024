@@ -1,0 +1,12 @@
+<?php
+
+namespace App\Http\Requests\ValueObjects{{ voClassTag }};
+
+use App\Http\Requests\ValueObjects\AbstractValueObject;
+
+class {{ class }} extends AbstractValueObject
+{
+    {{ properties }}
+
+    {{ getters }}
+}

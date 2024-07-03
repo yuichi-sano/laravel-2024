@@ -1,0 +1,26 @@
+<?php
+
+namespace App\Http\Requests;
+
+use Illuminate\Foundation\Http\FormRequest;
+use App\Http\Requests\ValueObjects\{{ voClassTag }}{{ voClassName }};
+
+class {{ class }} extends FormRequest
+{
+    public function authorize()
+    {
+        return true;
+    }
+
+    public function rules()
+    {
+        return [
+            {{ rules }}
+        ];
+    }
+
+    public function to{{ voClassName }}(): {{ voClassName }}
+    {
+        return new {{ voClassName }}($this->validated());
+    }
+}
