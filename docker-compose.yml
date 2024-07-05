@@ -9,7 +9,7 @@ services:
       dockerfile: ./docker/api/Dockerfile
     container_name: sample_2024-api
     volumes:
-      - ./sample_2024-api:/var/www/html
+      - ./api:/var/www/html
       # - api_storage:/var/www/html/storage
       # - api_modules:/var/www/html/vendor
       # - api_cache:/var/www/html/bootstrap/cache

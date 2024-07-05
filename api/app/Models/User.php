@@ -7,11 +7,10 @@
 namespace App\Models;
 
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Laravel\Sanctum\HasApiTokens;
 
 /**
  * Class User
@@ -31,21 +30,13 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
  * @property string|null $part
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
- * 
- * @property Company $company
- * @property Collection|MailTemplate[] $mail_templates
- * @property Collection|ProjectCharge[] $project_charges
- * @property Collection|ProjectTrap[] $project_traps
- * @property Collection|Trainer[] $trainers
- * @property Collection|TransmissionRecord[] $transmissions
- * @property Collection|Trap[] $traps
- * @property Collection|Role[] $roles
+ *
  *
  * @package App\Models
  */
 class User extends Authenticatable
 {
-    use HasFactory, Notifiable;
+    use HasFactory, Notifiable, HasApiTokens;
     protected $table = 'users';
 
 	protected $casts = [
@@ -57,7 +48,6 @@ class User extends Authenticatable
 		'company_id',
         'email',
         'password',
-		'cognito_sub',
 		'name_family',
 		'name_first',
 		'name_family_kana',
@@ -92,45 +82,4 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
-
-	public function company()
-	{
-		return $this->belongsTo(Company::class);
-	}
-
-	public function mail_templates()
-	{
-		return $this->hasMany(MailTemplate::class);
-	}
-
-	public function project_charges()
-	{
-		return $this->hasMany(ProjectCharge::class);
-	}
-
-	public function project_traps()
-	{
-		return $this->hasMany(ProjectTrap::class);
-	}
-
-	public function trainers()
-	{
-		return $this->hasMany(Trainer::class);
-	}
-
-	public function transmissions()
-	{
-		return $this->hasMany(TransmissionRecord::class);
-	}
-
-	public function traps()
-	{
-		return $this->hasMany(Trap::class);
-	}
-
-	public function roles()
-	{
-		return $this->belongsToMany(Role::class, 'user_roles')
-					->withTimestamps();
-	}
 }
