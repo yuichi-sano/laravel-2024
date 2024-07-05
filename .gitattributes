@@ -1,0 +1,35 @@
+* text=auto eol=lf
+*.css linguist-vendored
+*.scss linguist-vendored
+*.js linguist-vendored
+*.sh  text eol=lf
+*.env.*  text eol=lf
+*.sh     text eol=lf
+*.js     text eol=lf
+*.py     text eol=lf
+*.java   text eol=lf
+*.rb     text eol=lf
+*.html   text eol=lf
+*.css    text eol=lf
+*.md     text eol=lf
+Dockerfile text eol=lf
+*.dockerfile text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+unzip text eol=lf
+gradlew text eol=lf
+*.jpg    binary
+*.png    binary
+*.gif    binary
+*.zip    binary
+*.pdf    binary
+
+*.blade.php diff=html
+*.css diff=css
+*.html diff=html
+*.md diff=markdown
+*.php diff=php
+
+/.github export-ignore
+CHANGELOG.md export-ignore
+.styleci.yml export-ignore
