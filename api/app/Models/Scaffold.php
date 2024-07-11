@@ -9,9 +9,7 @@ class Scaffold extends Model
 {
     use HasFactory;
 
-    protected $primaryKey = [
-        'scaffold_id'
-    ];
+    protected $primaryKey = 'scaffold_id';
 
     protected $fillable = [
         'scaffold_name'
@@ -24,6 +22,6 @@ class Scaffold extends Model
 
     public function total()
     {
-        return $this->belongsTo(Total::class);
+        return $this->hasMany(Total::class);
     }
 }

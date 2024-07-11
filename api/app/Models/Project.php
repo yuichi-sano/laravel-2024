@@ -9,9 +9,7 @@ class Project extends Model
 {
     use HasFactory;
 
-    protected $primaryKey = [
-        'project_id'
-    ];
+    protected $primaryKey = 'project_id';
 
     protected $fillable = [
         'project_name'
@@ -19,21 +17,21 @@ class Project extends Model
 
     public function scaffold()
     {
-        return $this->hasOne(Scaffold::class);
+        return $this->belongsTo(Scaffold::class);
     }
 
-    public function result()
+    public function results()
     {
-        return $this->hasOne(Result::class);
+        return $this->hasMany(Result::class);
     }
 
-    public function position()
+    public function positions()
     {
-        return $this->hasOne(Position::class);
+        return $this->hasMany(Position::class);
     }
 
-    public function total()
+    public function totals()
     {
-        return $this->hasOne(Total::class);
+        return $this->hasMany(Total::class);
     }
 }

@@ -9,9 +9,7 @@ class Total extends Model
 {
     use HasFactory;
 
-    protected $primaryKey = [
-        'total_id'
-    ];
+    protected $primaryKey = 'total_id';
 
     protected $fillable = [
         'total_name',
@@ -25,6 +23,6 @@ class Total extends Model
 
     public function scaffold()
     {
-        return $this->haoOne(Project::class);
+        return $this->belongsTo(Scaffold::class);
     }
 }

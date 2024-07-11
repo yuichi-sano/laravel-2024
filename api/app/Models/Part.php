@@ -9,16 +9,15 @@ class Part extends Model
 {
     use HasFactory;
 
-    protected $primaryKey = [
-        'part_code'
-    ];
+    protected $primaryKey = 'part_code';
 
     protected $fillable = [
+        'part_code',
         'part_name'
     ];
 
     public function result()
     {
-        return $this->belongsTo(Result::class);
+        return $this->hasOne(Result::class);
     }
 }

@@ -4,6 +4,6 @@ namespace App\Repositories;
 
 use Illuminate\Pagination\LengthAwarePaginator;
 
-interface ProductRepositoryInterface extends BaseRepositoryInterface
+interface ScaffoldRepositoryInterface extends BaseRepositoryInterface
 {
 }

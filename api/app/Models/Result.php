@@ -9,9 +9,7 @@ class Result extends Model
 {
     use HasFactory;
 
-    protected $primaryKey = [
-        'Result_id'
-    ];
+    protected $primaryKey = 'result_id';
 
     protected $fillable = [
         'quantity'
@@ -19,7 +17,7 @@ class Result extends Model
 
     public function part()
     {
-        return $this->hasOne(Part::class);
+        return $this->belongsTo(Part::class);
     }
 
     public function project()
