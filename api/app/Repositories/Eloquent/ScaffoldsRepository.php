@@ -4,19 +4,15 @@ namespace App\Repositories\Eloquent;
 
 use App\Models\Scaffold;
 use App\Repositories\ScaffoldRepositoryInterface;
+use App\Repositories\Eloquent\EloquentRepository;
 use Illuminate\pagination\LengthAwarePaginator;
 
-class ScaffoldRepository implements ScaffoldRepositoryInterface
+class ScaffoldRepository extends EloquentRepository implements ScaffoldRepositoryInterface
 {
-    protected $scaffold;
+    public $scaffold;
 
     public function __construct(Scaffold $scaffold)
     {
         $this->scaffold = $scaffold;
-    }
-
-    public function all(array $columns)
-    {
-        return $this->scaffold->all($columns);
     }
 }
